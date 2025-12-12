@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎧 聽力助手</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .upload { border: 3px dashed #4CAF50; padding: 40px; text-align: center; margin: 20px 0; cursor: pointer; }
+        .btn { background: #4CAF50; color: white; padding: 12px 24px; border: none; border-radius: 5px; margin: 10px; cursor: pointer; }
+        .result { background: #f5f5f5; padding: 20px; margin-top: 20px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎧 聽力助手 - 網頁版</h1>
+        <p>上傳英文音訊，自動生成中英對照文字</p>
+        
+        <div class="upload" onclick="document.getElementById('fileInput').click()">
+            📁 點擊選擇音訊檔案（MP3/WAV/M4A）<br>
+            <small>最大50MB，最長20分鐘</small>
+            <input type="file" id="fileInput" accept="audio/*" style="display:none" onchange="showFileName()">
+        </div>
+        
+        <div id="fileInfo"></div>
+        
+        <button class="btn" onclick="startProcess()" id="processBtn">開始處理</button>
+        
+        <div class="result" id="result">
+            <h3>📝 處理結果：</h3>
+            <div id="output">
+                <div style="color:blue">[00:05] Hello, welcome to the listening helper.</div>
+                <div style="color:red">[00:05] 大家好，歡迎使用聽力助手。</div>
+                <hr>
+                <div style="color:blue">[00:12] This tool helps you practice English listening.</div>
+                <div style="color:red">[00:12] 這個工具幫助您練習英語聽力。</div>
+            </div>
+            <button class="btn" onclick="downloadResult()">下載文字檔</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        
+        function showFileName() {
+            const file = document.getElementById('fileInput').files[0];
+            if (file) {
+                selectedFile = file;
+                document.getElementById('fileInfo').innerHTML = 
+                    `<p>✅ 已選擇：<strong>${file.name}</strong> (${(file.size/1024/1024).toFixed(2)} MB)</p>`;
+            }
+        }
+        
+        function startProcess() {
+            if (!selectedFile) {
+                alert('請先選擇音訊檔案');
+                return;
+            }
+            
+            const btn = document.getElementById('processBtn');
+            btn.innerHTML = '🔄 處理中...';
+            btn.disabled = true;
+            
+            // 模擬處理過程
+            setTimeout(() => {
+                document.getElementById('result').style.display = 'block';
+                btn.innerHTML = '✅ 處理完成';
+                btn.disabled = false;
+            }, 2000);
+        }
+        
+        function downloadResult() {
+            const text = document.getElementById('output').innerText;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '雙語對照.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
